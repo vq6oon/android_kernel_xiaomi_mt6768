@@ -1234,7 +1234,7 @@ static struct mount *clone_mnt(struct mount *old, struct dentry *root,
 	bool is_current_ksu_domain = susfs_is_current_ksu_domain();
 	bool is_current_zygote_domain = susfs_is_current_zygote_domain();
 
-	/* - It is very important that we need to use CL_COPY_MNT_NS to identify whether 
+	/* - It is very important that we need to use CL_COPY_MNT_NS to identify whether
 	 *   the clone is a copy_tree() or single mount like called by __do_loopback()
 	 * - if caller process is KSU, consider the following situation:
 	 *     1. it is NOT doing unshare => call alloc_vfsmnt() to assign a new sus mnt_id
@@ -1258,7 +1258,7 @@ static struct mount *clone_mnt(struct mount *old, struct dentry *root,
 	}
 	// Secondly, check if it is zygote process and no matter it is doing unshare or not
 	if (likely(is_current_zygote_domain) && (old->mnt_id >= DEFAULT_SUS_MNT_ID)) {
-		/* Important Note: 
+		/* Important Note:
 		 *  - Here we can't determine whether the unshare is called zygisk or not,
 		 *    so we can only patch out the unshare code in zygisk source code for now
 		 *  - But at least we can deal with old sus mounts using alloc_vfsmnt()
@@ -3345,7 +3345,7 @@ struct mnt_namespace *copy_mnt_ns(unsigned long flags, struct mnt_namespace *ns,
 	// q->mnt.susfs_mnt_id_backup -> original mnt_id
 	// q->mnt_id -> will be modified to the fake mnt_id
 
-	// Here We are only interested in processes of which original mnt namespace belongs to zygote 
+	// Here We are only interested in processes of which original mnt namespace belongs to zygote
 	// Also we just make use of existing 'q' mount pointer, no need to delcare extra mount pointer
 	if (is_zygote_pid) {
 		last_entry_mnt_id = list_first_entry(&new_ns->list, struct mount, mnt_list)->mnt_id;
@@ -3904,26 +3904,6 @@ const struct proc_ns_operations mntns_operations = {
 	.owner		= mntns_owner,
 };
 
-#ifdef CONFIG_KSU_SUSFS_TRY_UMOUNT
-extern void susfs_try_umount_all(uid_t uid);
-void susfs_run_try_umount_for_current_mnt_ns(void) {
-	struct mount *mnt;
-	struct mnt_namespace *mnt_ns;
-
-	mnt_ns = current->nsproxy->mnt_ns;
-	// Lock the namespace
-	namespace_lock();
-	list_for_each_entry(mnt, &mnt_ns->list, mnt_list) {
-		// Change the sus mount to be private
-		if (mnt->mnt_id >= DEFAULT_SUS_MNT_ID) {
-			change_mnt_propagation(mnt, MS_PRIVATE);
-		}
-	}
-	// Unlock the namespace
-	namespace_unlock();
-	susfs_try_umount_all(current_uid().val);
-}
-#endif
 #ifdef CONFIG_KSU_SUSFS
 bool susfs_is_mnt_devname_ksu(struct path *path) {
 	struct mount *mnt;
