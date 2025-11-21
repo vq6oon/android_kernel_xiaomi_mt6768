@@ -666,7 +666,7 @@ void seq_putc(struct seq_file *m, char c)
 }
 EXPORT_SYMBOL(seq_putc);
 
-void __seq_puts(struct seq_file *m, const char *s)
+void seq_puts(struct seq_file *m, const char *s)
 {
 	int len = strlen(s);
 
@@ -677,7 +677,7 @@ void __seq_puts(struct seq_file *m, const char *s)
 	memcpy(m->buf + m->count, s, len);
 	m->count += len;
 }
-EXPORT_SYMBOL(__seq_puts);
+EXPORT_SYMBOL(seq_puts);
 
 /*
  * A helper routine for putting decimal numbers without rich format of printf().
