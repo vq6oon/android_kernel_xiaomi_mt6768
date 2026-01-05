@@ -265,7 +265,7 @@ out:
 }
 
 static int mounts_open_common(struct inode *inode, struct file *file,
-			      int (*show)(struct seq_file *, struct vfsmount *))git
+			      int (*show)(struct seq_file *, struct vfsmount *))
 {
 	struct task_struct *task = get_proc_task(inode);
 	struct nsproxy *nsp;
