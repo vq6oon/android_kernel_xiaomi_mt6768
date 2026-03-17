@@ -395,7 +395,7 @@ SYSCALL_DEFINE2(newlstat, const char __user *, filename,
 }
 
 #if defined(CONFIG_KSU) && !defined(CONFIG_KSU_SUSFS)
-__attribute__((hot)) 
+__attribute__((hot))
 extern int ksu_handle_stat(int *dfd, const char __user **filename_user,
 				int *flags);
 #endif
@@ -555,7 +555,7 @@ SYSCALL_DEFINE4(fstatat64, int, dfd, const char __user *, filename,
 	int error;
 
 #if defined(CONFIG_KSU) && !defined(CONFIG_KSU_SUSFS) // 32-bit su
-	ksu_handle_stat(&dfd, &filename, &flag); 
+	ksu_handle_stat(&dfd, &filename, &flag);
 #endif
 	error = vfs_fstatat(dfd, filename, &stat, flag);
 	if (error)
